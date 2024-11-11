@@ -1,5 +1,5 @@
-import dotenv from "dotenv-load";
-dotenv();
+import dotenv from "dotenv";
+dotenv.config();
 
 const errors = [];
 const env = process.env;

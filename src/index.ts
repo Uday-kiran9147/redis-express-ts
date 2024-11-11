@@ -1,13 +1,18 @@
 import { Redis } from '@upstash/redis'
 import express from "express";
+import dotenv from "dotenv";
+dotenv.config();
+
 const app = express();
 
 const PORT = 4000;
 const USER_NAME = 'username'
+
+
 const redis = new Redis(
     {
-        url: 'https://one-labrador-36934.upstash.io',
-        token: 'AZBGAAIjcDE0OTI3NjgwYzBhYjQ0NDIwYjIwZDM2OGQ3MDcwOTI4MHAxMA'
+        url: process.env.REDIS_URL,
+        token: process.env.SESSION_SECRET
     }
 );
 
