@@ -1,11 +1,15 @@
-import { createClient } from 'redis';
+import { Redis } from '@upstash/redis'
 import express from "express";
 const app = express();
 
 const PORT = 4000;
 const USER_NAME = 'username'
-const redis = createClient();
-redis.connect();
+const redis = new Redis(
+    {
+        url: 'https://one-labrador-36934.upstash.io',
+        token: 'AZBGAAIjcDE0OTI3NjgwYzBhYjQ0NDIwYjIwZDM2OGQ3MDcwOTI4MHAxMA'
+    }
+);
 
 app.use(express.json());
 
@@ -13,14 +17,6 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-redis.on('connect', () => {
-
-    console.log('Redis connected');
-});
-
-redis.on('error', (error) => {
-    console.log('Error: ', error);
-});
 async function getData(req: express.Request, res: express.Response) {
     const user = req.params[`${USER_NAME}`];
     try {
@@ -28,7 +24,7 @@ async function getData(req: express.Request, res: express.Response) {
         const { public_repos } = await response.json();
         const uploadString = `User ${req.params.username} has ${public_repos} public repositories`;
         const jsonData = JSON.stringify(uploadString);
-        await redis.set(user, jsonData,{ 'EX': 3600});
+        await redis.set(user, jsonData);
         console.log('Data from the server');
         res.json({
             data: uploadString,
@@ -46,7 +42,7 @@ async function cache(req: express.Request, res: express.Response, next: express.
     if (data !== null) {
         console.log('Data from the cache');
         res.json({
-            data: JSON.parse(data),
+            data: data,
             source: 'cache'
         });
     } else {
