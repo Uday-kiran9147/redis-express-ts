@@ -1,10 +1,11 @@
-import Redis from "ioredis";
+import { createClient } from 'redis';
 import express from "express";
 const app = express();
 
 const PORT = 4000;
 const USER_NAME = 'username'
-const redis = new Redis();
+const redis = createClient();
+redis.connect();
 
 app.use(express.json());
 
@@ -12,6 +13,14 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
+redis.on('connect', () => {
+
+    console.log('Redis connected');
+});
+
+redis.on('error', (error) => {
+    console.log('Error: ', error);
+});
 async function getData(req: express.Request, res: express.Response) {
     const user = req.params[`${USER_NAME}`];
     try {
@@ -19,7 +28,7 @@ async function getData(req: express.Request, res: express.Response) {
         const { public_repos } = await response.json();
         const uploadString = `User ${req.params.username} has ${public_repos} public repositories`;
         const jsonData = JSON.stringify(uploadString);
-        await redis.set(user, jsonData, 'EX', 3600);
+        await redis.set(user, jsonData,{ 'EX': 3600});
         console.log('Data from the server');
         res.json({
             data: uploadString,
