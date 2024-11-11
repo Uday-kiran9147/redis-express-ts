@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon --watch src --exec ts-node src/index.ts",
+    "start": "nodemon --exec node --no-warnings=ExperimentalWarning --loader ts-node/esm src/index.ts",
     "test": "jest --detectOpenHandles",
     "test:watch": "jest --watch"
   },
