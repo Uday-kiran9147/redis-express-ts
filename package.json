@@ -6,6 +6,7 @@
   "scripts": {
     "start": "nodemon --exec node --no-warnings=ExperimentalWarning --loader ts-node/esm src/index.ts",
     "test": "jest --detectOpenHandles",
+    "prod": "tsc && node dist/index.js",
     "test:watch": "jest --watch"
   },
   "keywords": [],
